@@ -34,6 +34,13 @@ pipeline {
             }
         }
 
+        stage('Remove Old Docker Image') {
+            steps {
+                echo "Removing old Docker image if exists"
+                sh 'docker rmi -f $IMAGE_NAME || true'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image for ${params.SELECT_PROJECT}"
@@ -43,11 +50,22 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                echo "Deploying container ${CONTAINER_NAME}"
+                echo "Deploying container $CONTAINER_NAME"
+
                 sh """
                     docker stop $CONTAINER_NAME || true
                     docker rm $CONTAINER_NAME || true
-                    docker run -d -p 8080:8080 --name $CONTAINER_NAME $IMAGE_NAME
+
+                    # Set HOST_PORT based on container name
+                    if [ "$CONTAINER_NAME" = "project1-container" ]; then
+                        HOST_PORT=8083
+                    elif [ "$CONTAINER_NAME" = "project2-container" ]; then
+                        HOST_PORT=8084
+                    else
+                        HOST_PORT=8085
+                    fi
+
+                    docker run -d -p \$HOST_PORT:8080 --name $CONTAINER_NAME $IMAGE_NAME
                 """
             }
         }
