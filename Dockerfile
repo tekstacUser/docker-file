@@ -3,7 +3,7 @@ FROM tomcat:8.5-jdk17
 # Remove the default ROOT application if exists
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
 # Copy WAR file to ROOT.war (so it runs at '/')
-COPY build/*.war /usr/local/tomcat/webapps/ROOT.war
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
 # Expose port 8080
 EXPOSE 8080
 # Start Tomcat
