@@ -28,7 +28,8 @@ pipeline {
                 copyArtifacts(
                     projectName: "${params.SELECT_PROJECT}",
                     filter: 'target/*.war',
-                    target: 'build'
+                    target: 'build',
+                    flatten: true
                 )
             }
         }
